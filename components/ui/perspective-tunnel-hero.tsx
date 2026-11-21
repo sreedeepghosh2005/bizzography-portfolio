@@ -101,7 +101,8 @@ function TunnelCard({ card, progress, pointer, total, stage, onSelect }: TunnelC
 
     const localProgress = useTransform(progress, [start, end], [0, 1]);
 
-    const farZ = stage.isMobile ? -1200 : -1700;
+    // On a phone the far point is closer, so the first frames are not tiny.
+    const farZ = stage.isMobile ? -700 : -1700;
     const nearZ = stage.isMobile ? 350 : 500;
     const z = useTransform(localProgress, [0, 1], [farZ, nearZ]);
 
@@ -110,11 +111,12 @@ function TunnelCard({ card, progress, pointer, total, stage, onSelect }: TunnelC
     const visibility = useTransform(opacity, (o) => (o > 0.05 ? "visible" : "hidden"));
 
     const cardWidth = stage.isMobile
-        ? Math.max(130, Math.min(180, stage.width * 0.38))
+        ? Math.max(170, Math.min(240, stage.width * 0.52))
         : Math.max(180, Math.min(270, stage.width * 0.18));
 
     const baseX = card.angleCos * (stage.width * card.radiusFactorX);
-    const baseY = card.angleSin * (stage.height * card.radiusFactorY);
+    // A phone screen is tall. The frames use more of the height there.
+    const baseY = card.angleSin * (stage.height * card.radiusFactorY * (stage.isMobile ? 1.2 : 1));
     const panStrength = stage.isMobile ? 20 : 45;
 
     const transform = useTransform(
@@ -150,11 +152,11 @@ function TunnelCard({ card, progress, pointer, total, stage, onSelect }: TunnelC
                 <div className="absolute inset-0 flex items-end bg-gradient-to-t from-black/80 via-black/10 to-transparent p-4 sm:p-5">
                     <span className="flex flex-col gap-1">
                         {card.item.category ? (
-                            <span className="text-[9px] uppercase tracking-[0.3em] text-[#e2c58a]">
+                            <span className="text-[10px] uppercase tracking-[0.3em] text-[#e2c58a] md:text-[9px]">
                                 {card.item.category}
                             </span>
                         ) : null}
-                        <span className="font-display text-lg italic leading-tight text-white sm:text-xl">
+                        <span className="font-display text-xl italic leading-tight text-white">
                             {card.item.title}
                         </span>
                     </span>
@@ -247,8 +249,8 @@ export default function PerspectiveTunnelHero({
                 <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,var(--glow)_0%,transparent_70%)]" />
 
                 {/* Depth ring guides */}
-                <div className="pointer-events-none absolute h-[48vmin] w-[48vmin] rounded-full border border-gold/15" />
-                <div className="pointer-events-none absolute h-[76vmin] w-[76vmin] rounded-full border border-dashed border-line" />
+                <div className="pointer-events-none absolute h-[72vmin] w-[72vmin] rounded-full md:h-[48vmin] md:w-[48vmin] border border-gold/15" />
+                <div className="pointer-events-none absolute h-[118vmin] w-[118vmin] rounded-full md:h-[76vmin] md:w-[76vmin] border border-dashed border-line" />
 
                 {/* Central title */}
                 <motion.div
@@ -256,13 +258,13 @@ export default function PerspectiveTunnelHero({
                     className="pointer-events-none z-0 flex max-w-2xl flex-col items-center px-6 text-center"
                 >
                     {kicker ? (
-                        <p className="mb-5 text-[11px] uppercase tracking-[0.4em] text-gold">{kicker}</p>
+                        <p className="mb-5 text-balance text-[13px] uppercase leading-relaxed tracking-[0.3em] text-gold md:text-[11px] md:tracking-[0.4em]">{kicker}</p>
                     ) : null}
-                    <h1 className="font-display text-6xl font-medium leading-[0.92] tracking-tight text-ink sm:text-7xl md:text-8xl">
+                    <h1 className="font-display text-[clamp(3.75rem,20vw,5rem)] font-medium leading-[0.92] tracking-tight text-ink md:text-8xl">
                         {title}
                     </h1>
                     {subtitle ? (
-                        <p className="mt-6 max-w-[36ch] text-sm font-light text-ink/60 sm:text-base">
+                        <p className="mt-6 max-w-[30ch] text-lg font-light text-ink/60 md:max-w-[36ch] md:text-base">
                             {subtitle}
                         </p>
                     ) : null}
@@ -271,7 +273,7 @@ export default function PerspectiveTunnelHero({
                 {/* Scroll prompt */}
                 <motion.div
                     style={{ opacity: promptOpacity }}
-                    className="pointer-events-none absolute bottom-8 z-20 flex flex-col items-center gap-2 text-[11px] uppercase tracking-[0.3em] text-ink/50"
+                    className="pointer-events-none absolute bottom-8 z-20 flex flex-col items-center gap-2 text-[13px] uppercase tracking-[0.3em] text-ink/50 md:text-[11px]"
                 >
                     <span>Scroll to explore</span>
                     <div className="h-6 w-px bg-gradient-to-b from-gold to-transparent" />
